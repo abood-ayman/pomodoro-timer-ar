@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مؤقت بومودورو للمذاكرة والعمل | أداة مجانية</title>
+<meta name="description" content="مؤقت بومودورو بسيط: ٢٥ دقيقة تركيز و٥ دقائق راحة مع عداد جلسات وراحة طويلة كل أربع جلسات. يعمل على جهازك دون حسابات.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,'Segoe UI',Arial,sans-serif;background:#f1f5f9;color:#1e293b;line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;padding:1.6rem 1rem;text-align:center}
+header h1{font-size:1.5rem}
+.tagline{opacity:.92;font-size:.95rem;margin-top:.25rem}
+main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:1rem}
+.card{background:#fff;border-radius:14px;padding:1.25rem;box-shadow:0 1px 4px rgba(15,23,42,.08);margin-bottom:1rem}
+.card h2{font-size:1.1rem;margin-bottom:.4rem;color:#0f766e}
+label{display:block;font-weight:700;margin:.75rem 0 .3rem}
+input,select,textarea{width:100%;padding:.7rem .8rem;border:1.5px solid #cbd5e1;border-radius:10px;font-size:1rem;font-family:inherit;background:#fff;color:#1e293b}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
+.row{display:flex;gap:.6rem}
+.row>*{flex:1;min-width:0}
+button{display:inline-block;width:100%;padding:.8rem;border:0;border-radius:10px;background:#0f766e;color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:1rem}
+button:hover{background:#115e59}
+button.ghost{background:#e2e8f0;color:#1e293b}
+.result{background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;padding:1rem;margin-top:1rem;font-size:1.05rem;word-break:break-word}
+.result b{color:#047857}
+.result.warn{background:#fffbeb;border-color:#fcd34d}
+.result.warn b{color:#b45309}
+.result.bad{background:#fef2f2;border-color:#fca5a5}
+.result.bad b{color:#b91c1c}
+.muted{color:#64748b;font-size:.85rem}
+footer{background:#0f172a;color:#94a3b8;text-align:center;padding:1.2rem 1rem;font-size:.85rem;line-height:1.9}
+footer a{color:#5eead4}
+table{width:100%;border-collapse:collapse;margin-top:.5rem}
+th,td{padding:.5rem;border-bottom:1px solid #e2e8f0;text-align:right;font-size:.95rem}
+.big{font-size:1.6rem;font-weight:800}
+.hidden{display:none}
+.chk{display:flex;align-items:center;gap:.5rem;margin:.3rem 0}
+.chk input{width:auto}
+
+</style>
+</head>
+<body>
+<header>
+<h1>مؤقت بومودورو</h1>
+<p class="tagline">٢٥ دقيقة تركيز، ٥ دقائق راحة — تقنية بومودورو للمذاكرة والعمل</p>
+</header>
+<main>
+<div class="card" style="text-align:center">
+<h2 id="phase">جلسة تركيز</h2>
+<p class="big" id="clock" style="font-size:3rem">25:00</p>
+<p class="muted">جلسات التركيز المكتملة: <span id="done">0</span></p>
+<button id="startBtn" onclick="toggle()">ابدأ</button>
+<button class="ghost" onclick="resetAll()">إعادة ضبط</button>
+</div>
+<div class="card">
+<h2>المدد (بالدقائق)</h2>
+<div class="row">
+<div><label for="focusMin">تركيز</label><input type="number" inputmode="numeric" id="focusMin" min="1" max="120" value="25" onchange="applySettings()"></div>
+<div><label for="shortMin">راحة قصيرة</label><input type="number" inputmode="numeric" id="shortMin" min="1" max="60" value="5" onchange="applySettings()"></div>
+<div><label for="longMin">راحة طويلة</label><input type="number" inputmode="numeric" id="longMin" min="1" max="60" value="15" onchange="applySettings()"></div>
+</div>
+</div>
+
+</main>
+<footer>
+<p>تعمل هذه الأداة بالكامل على جهازك، ولا تُحفظ أو تُرسل أي بيانات إلى أي خادم.</p>
+<p>أداة مجانية مفتوحة المصدر · بُنيت بمساعدة أدوات ذكاء اصطناعي · <a href="https://github.com/abood-ayman/pomodoro-timer-ar">الكود على GitHub</a></p>
+</footer>
+<script>
+window.__jserrors=[];window.addEventListener('error',function(e){window.__jserrors.push(String(e.message))});
+const g = id => document.getElementById(id);
+
+const state = { phase: 'focus', done: 0, remaining: 25 * 60, timer: null, endAt: 0 };
+
+function durations() {
+  return {
+    focus: Math.max(1, parseInt(g('focusMin').value, 10) || 25) * 60,
+    short: Math.max(1, parseInt(g('shortMin').value, 10) || 5) * 60,
+    long: Math.max(1, parseInt(g('longMin').value, 10) || 15) * 60
+  };
+}
+function fmtClock(sec) {
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+}
+function phaseName(p) { return p === 'focus' ? 'جلسة تركيز' : p === 'short' ? 'راحة قصيرة' : 'راحة طويلة'; }
+function nextPhase(cur, done) {
+  if (cur === 'focus') return (done % 4 === 0) ? 'long' : 'short';
+  return 'focus';
+}
+function render() {
+  g('clock').textContent = fmtClock(state.remaining);
+  g('phase').textContent = phaseName(state.phase);
+  g('done').textContent = state.done;
+}
+function beep() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator(), gn = ctx.createGain();
+    o.connect(gn); gn.connect(ctx.destination);
+    o.frequency.value = 880; gn.gain.value = 0.15;
+    o.start(); setTimeout(() => { o.stop(); ctx.close(); }, 400);
+  } catch (e) { /* no audio */ }
+}
+function tick() {
+  state.remaining = Math.max(0, Math.round((state.endAt - Date.now()) / 1000));
+  if (state.remaining <= 0) {
+    pause();
+    beep();
+    if (state.phase === 'focus') state.done++;
+    state.phase = nextPhase(state.phase, state.done);
+    state.remaining = durations()[state.phase];
+  }
+  render();
+}
+function toggle() {
+  if (state.timer) { pause(); } else {
+    state.endAt = Date.now() + state.remaining * 1000;
+    state.timer = setInterval(tick, 250);
+    g('startBtn').textContent = 'إيقاف مؤقت';
+  }
+}
+function pause() {
+  clearInterval(state.timer); state.timer = null;
+  g('startBtn').textContent = 'ابدأ';
+}
+function resetAll() {
+  pause();
+  state.phase = 'focus'; state.done = 0;
+  state.remaining = durations().focus;
+  render();
+}
+function applySettings() { if (!state.timer) { state.remaining = durations()[state.phase]; render(); } }
+
+render();
+
+window.__test = function () {
+  const ok = fmtClock(1500) === '25:00' && fmtClock(0) === '00:00' && fmtClock(65) === '01:05' &&
+             nextPhase('focus', 1) === 'short' && nextPhase('focus', 4) === 'long' &&
+             nextPhase('short', 4) === 'focus' && nextPhase('long', 8) === 'focus';
+  return { pass: ok, details: {} };
+};
+
+window.__demo = function () {
+  state.remaining = 24 * 60 + 59; state.done = 2;
+  render();
+};
+
+</script>
+</body>
+</html>
