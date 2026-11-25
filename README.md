@@ -1,28 +1,27 @@
-# مؤقت بومودورو
+# Pomodoro Timer | مؤقت بومودورو
 
-٢٥ دقيقة تركيز، ٥ دقائق راحة — تقنية بومودورو للمذاكرة والعمل
+A simple Pomodoro timer: 25 minutes of focus and 5-minute breaks, with a session counter and a long break every four sessions. Arabic interface.
 
-**رابط الأداة (تعمل فورًا من المتصفح):** https://abood-ayman.github.io/pomodoro-timer-ar/
+**Live app:** https://abood-ayman.github.io/pomodoro-timer-ar/
 
-## ما الذي تقدمه؟
+![Pomodoro Timer, mobile view](docs/screenshot.svg)
 
-- جلسات تركيز ٢٥ دقيقة وراحات قصيرة ٥ دقائق
-- راحة طويلة ١٥ دقيقة بعد كل ٤ جلسات تركيز تلقائيًا
-- عداد جلسات مكتملة، وبدء/إيقاف مؤقت/إعادة ضبط
-- تنبيه صوتي بسيط عند نهاية كل جلسة (بصوت المتصفح)
+This is a personal project, built with AI tools.
 
-## الخصوصية
+## Features
+- 25-minute focus sessions and 5-minute short breaks
+- Automatic 15-minute long break after every 4 focus sessions
+- Completed-session counter, start/pause/reset
+- Simple sound alert at the end of each session
 
-تعمل الأداة بالكامل داخل متصفحك (HTML/CSS/JavaScript فقط). لا يوجد خادم، ولا حسابات، ولا تتبّع، ولا تُرسل أو تُحفظ أي بيانات تدخلها خارج جهازك.
+## Privacy
+Everything runs in your browser. No data is stored or sent anywhere.
 
-## التقنية
+## Run locally
+Open `index.html` in any browser. It is a single static page with no dependencies.
 
-صفحة ثابتة واحدة بلا أي مكتبات خارجية، تعمل على الهاتف والحاسوب، وتُستضاف مجانًا عبر GitHub Pages.
+## Status
+Stable.
 
-## ملاحظة شفافية
-
-بُنيت هذه الأداة بمساعدة أدوات ذكاء اصطناعي، ورُوعيَت بساطتها وفائدتها المباشرة.
-
-## الرخصة
-
-MIT — انظر ملف LICENSE.
+## Copyright
+MIT License - Copyright (c) 2026 Abdullah Ayman.
