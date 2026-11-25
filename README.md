@@ -4,6 +4,8 @@ A simple Pomodoro timer: 25 minutes of focus and 5-minute breaks, with a session
 
 **Live app:** https://abood-ayman.github.io/pomodoro-timer-ar/
 
+**LinkedIn:** [Project entry](https://www.linkedin.com/in/abdullah-ayman-1678b737b/details/projects/)
+
 ![Pomodoro Timer, mobile view](docs/screenshot.svg)
 
 This is a personal project, built with AI tools.
